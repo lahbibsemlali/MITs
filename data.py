@@ -1,10 +1,10 @@
-"""data.py — persistence layer for mit ⚡
+"""data.py — persistence layer for MITs
 
 Paths follow XDG Base Directory spec:
-  data:   $XDG_DATA_HOME/mit/data.json   (~/.local/share/mit/data.json)
-  config: $XDG_CONFIG_HOME/mit/config.json (~/.config/mit/config.json)
+  data:   $XDG_DATA_HOME/mits/data.json   (~/.local/share/mits/data.json)
+  config: $XDG_CONFIG_HOME/mits/config.json (~/.config/mits/config.json)
 
-Override via env: MIT_DATA=/path/to/data.json
+Override via env: MITS_DATA=/path/to/data.json (legacy: MIT_DATA)
 """
 from __future__ import annotations
 
@@ -33,27 +33,43 @@ def _xdg_config_home() -> Path:
 
 
 def get_data_path() -> Path:
+    if "MITS_DATA" in os.environ:
+        return Path(os.environ["MITS_DATA"])
     if "MIT_DATA" in os.environ:
         return Path(os.environ["MIT_DATA"])
-    return _xdg_data_home() / "mit" / "data.json"
+    return _xdg_data_home() / "mits" / "data.json"
 
 
 def get_config_path() -> Path:
-    return _xdg_config_home() / "mit" / "config.json"
+    return _xdg_config_home() / "mits" / "config.json"
 
 
 DATA_PATH   = get_data_path()
 CONFIG_PATH = get_config_path()
 
 VALID_LISTS = ("today", "inbox", "someday")
-MIT_LIMIT   = int(os.environ.get("MIT_MIT_LIMIT", "3"))
+MIT_LIMIT   = int(os.environ.get("MITS_MIT_LIMIT") or os.environ.get("MIT_MIT_LIMIT", "3"))
 
 
 # ── Migration from legacy path ────────────────────────────────────────────────
 
+def _maybe_migrate_mit_dir_to_mits() -> None:
+    """Copy former ~/.local/share/mit/ and ~/.config/mit/ into mits/ if new paths are empty."""
+    if "MITS_DATA" in os.environ or "MIT_DATA" in os.environ:
+        return
+    old_data = _xdg_data_home() / "mit" / "data.json"
+    if old_data.exists() and not DATA_PATH.exists():
+        DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(old_data, DATA_PATH)
+    old_cfg = _xdg_config_home() / "mit" / "config.json"
+    if old_cfg.exists() and not CONFIG_PATH.exists():
+        CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(old_cfg, CONFIG_PATH)
+
+
 def _maybe_migrate() -> None:
     """Migrate ~/.forge/data.json → XDG path if legacy exists and XDG doesn't."""
-    if "MIT_DATA" in os.environ:
+    if "MITS_DATA" in os.environ or "MIT_DATA" in os.environ:
         return
     if _LEGACY_DATA.exists() and not DATA_PATH.exists():
         DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -63,6 +79,7 @@ def _maybe_migrate() -> None:
 # ── Storage ───────────────────────────────────────────────────────────────────
 
 def load_data() -> dict:
+    _maybe_migrate_mit_dir_to_mits()
     _maybe_migrate()
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     if not DATA_PATH.exists():
@@ -156,19 +173,12 @@ def parse_quick_input(raw: str, default_list: str = "inbox") -> dict:
     Parse a single-line task input with optional inline tags:
       "fix SSR bug +work due:today *"
       → title="fix SSR bug", project="work", due="<today>", is_mit=True, list="inbox"
+      "fix bugs * recur:daily" → title="fix bugs", recur="daily", is_mit=True
     """
     is_mit  = False
     project = ""
     due     = None
     lst     = default_list
-
-    # MIT marker: trailing ★ or " *"
-    if "★" in raw:
-        is_mit = True
-        raw    = raw.replace("★", "").strip()
-    elif re.search(r'\s\*\s*$', raw):
-        is_mit = True
-        raw    = re.sub(r'\s\*\s*$', '', raw).strip()
 
     # list:xxx
     m = re.search(r'\b(today|inbox|someday):', raw)
@@ -197,6 +207,17 @@ def parse_quick_input(raw: str, default_list: str = "inbox") -> dict:
     if m:
         recur = m.group(1).lower()
         raw = (raw[:m.start()] + raw[m.end():]).strip()
+
+    # MIT marker: after due/recur/etc. so "title * recur:daily" works (not only "* at EOL")
+    raw = " ".join(raw.split())
+    if "★" in raw:
+        is_mit = True
+        raw = raw.replace("★", "").strip()
+        raw = " ".join(raw.split())
+    if re.search(r"\s\*\s*$", raw):
+        is_mit = True
+        raw = re.sub(r"\s\*\s*$", "", raw).strip()
+        raw = " ".join(raw.split())
 
     title = " ".join(raw.split())
     return {
@@ -364,7 +385,7 @@ def generate_report(data: dict) -> str:
     completed  = [t for t in data["tasks"] if t.get("done")]
     incomplete = [t for t in data["tasks"] if not t.get("done")]
 
-    lines = [f"# Week of {week_start} — mit report\n"]
+    lines = [f"# Week of {week_start} — MITs report\n"]
 
     lines.append(f"## ✓ Completed ({len(completed)})\n")
     for t in completed:
@@ -401,7 +422,7 @@ def generate_summary(data: dict) -> str:
     inbox_count = sum(1 for t in tasks if t["list"] == "inbox"  and not t.get("done"))
     streak      = data.get("streaks", {}).get("count", 0)
 
-    lines = [f"⚡ mit — {weekday}", ""]
+    lines = [f"⚡ MITs — {weekday}", ""]
 
     if mits:
         lines.append(f"  MITs ({len(mits)}/{MIT_LIMIT})")

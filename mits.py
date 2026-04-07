@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-mit ⚡ — terminal task manager enforcing the 3 Most Important Tasks method.
+MITs — terminal task manager enforcing the 3 Most Important Tasks method.
 
 CLIG-compliant CLI. See https://clig.dev/
 """
@@ -25,20 +25,20 @@ signal.signal(signal.SIGINT, _handle_sigint)
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="mit",
+        prog="mits",
         description="Terminal task manager — 3 Most Important Tasks per day.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
 examples:
-  mit                          launch the TUI
-  mit "fix the bug"            add to inbox
-  mit today "fix the bug"      add to today
-  mit today "fix +work"        add to today, tag project #work
-  mit inbox "idea +gcmedia"    add to inbox with project tag
-  mit --summary                print today's MITs and exit
-  mit --summary --json         machine-readable summary (pipe to jq)
-  mit --report                 print weekly markdown report
-  mit --report > week.md       save report to file
+  mits                          launch the TUI
+  mits "fix the bug"            add to inbox
+  mits today "fix the bug"      add to today
+  mits today "fix +work"        add to today, tag project #work
+  mits inbox "idea +gcmedia"    add to inbox with project tag
+  mits --summary                print today's MITs and exit
+  mits --summary --json         machine-readable summary (pipe to jq)
+  mits --report                 print weekly markdown report
+  mits --report > week.md       save report to file
 
 inline task syntax (works in TUI add/edit prompts too):
   "today: title +project due:fri recur:daily ★"
@@ -47,16 +47,16 @@ inline task syntax (works in TUI add/edit prompts too):
   list prefix: today: / inbox: / someday:  (at start or after title tokens)
 
 environment variables:
-  MIT_DATA        override data file path
-  MIT_MIT_LIMIT   override MIT limit (default: 3)
-  NO_COLOR        disable color output (https://no-color.org/)
+  MITS_DATA        override data file path (legacy: MIT_DATA)
+  MITS_MIT_LIMIT   override MIT limit (default: 3; legacy: MIT_MIT_LIMIT)
+  NO_COLOR         disable color output (https://no-color.org/)
 
 paths:
-  data:   $XDG_DATA_HOME/mit/data.json     (~/.local/share/mit/data.json)
-  config: $XDG_CONFIG_HOME/mit/config.json (~/.config/mit/config.json)
+  data:   $XDG_DATA_HOME/mits/data.json     (~/.local/share/mits/data.json)
+  config: $XDG_CONFIG_HOME/mits/config.json (~/.config/mits/config.json)
 
 shell greeting — add to .zshrc / .bashrc:
-  python /path/to/mit.py --summary
+  python /path/to/mits.py --summary
 
 feedback & issues: https://github.com/lahbibsemlali/mit
 """,
@@ -92,7 +92,7 @@ feedback & issues: https://github.com/lahbibsemlali/mit
     parser.add_argument(
         "--version",
         action="version",
-        version="mit 0.1.0",
+        version="mits 0.1.0",
     )
     return parser
 
@@ -106,7 +106,11 @@ def cmd_summary(json_mode: bool = False) -> None:
     if json_mode:
         print(generate_summary_json(data))
     else:
-        print(generate_summary(data))
+        from rich.console import Console
+        from logo import print_logo
+        c = Console()
+        print_logo(c)
+        c.print(generate_summary(data))
     sys.exit(0)
 
 
@@ -131,17 +135,17 @@ def cmd_add(list_or_title: str, extra_title: str | None) -> None:
         final_title = extra_title
 
     elif low in VALID_LISTS and not extra_title:
-        print(f"mit: error: list '{low}' given but no task title", file=sys.stderr)
-        print(f'usage: mit {low} "task title"', file=sys.stderr)
+        print(f"mits: error: list '{low}' given but no task title", file=sys.stderr)
+        print(f'usage: mits {low} "task title"', file=sys.stderr)
         sys.exit(2)
 
     elif extra_title is not None:
         # Two args but first is not a valid list — typo?
         suggestion = suggest_list(list_or_title)
-        print(f"mit: '{list_or_title}' is not a valid list.", file=sys.stderr)
+        print(f"mits: '{list_or_title}' is not a valid list.", file=sys.stderr)
         if suggestion:
             print(f"did you mean '{suggestion}'?", file=sys.stderr)
-            print(f'  mit {suggestion} "{extra_title}"', file=sys.stderr)
+            print(f'  mits {suggestion} "{extra_title}"', file=sys.stderr)
         else:
             print("valid lists: today, inbox, someday", file=sys.stderr)
         sys.exit(2)
@@ -153,7 +157,7 @@ def cmd_add(list_or_title: str, extra_title: str | None) -> None:
 
     # Use the unified parser
     result = parse_quick_input(final_title, default_list=lst)
-    
+
     data = load_data()
 
     project_name = result.get("project", "")
@@ -163,7 +167,7 @@ def cmd_add(list_or_title: str, extra_title: str | None) -> None:
             if sys.stdin.isatty():
                 try:
                     ans = input(
-                        f"mit: project '+{project_name}' is not in your list. Create it? [Y/n] "
+                        f"mits: project '+{project_name}' is not in your list. Create it? [Y/n] "
                     ).strip().lower()
                 except EOFError:
                     ans = "y"
@@ -174,18 +178,18 @@ def cmd_add(list_or_title: str, extra_title: str | None) -> None:
                     result["project"] = ""
             else:
                 print(
-                    f"mit: creating new project '+{project_name}' (non-interactive)",
+                    f"mits: creating new project '+{project_name}' (non-interactive)",
                     file=sys.stderr,
                 )
                 projects.append(project_name)
-            
+
     # Enforce MIT limits
     if result.get("is_mit"):
         active_mits = sum(1 for t in data.get("tasks", []) if t.get("is_mit") and not t.get("done"))
         from data import MIT_LIMIT
         if active_mits >= MIT_LIMIT:
             result["is_mit"] = False
-            print(f"mit: limit of {MIT_LIMIT} MITs reached — task added without ★", file=sys.stderr)
+            print(f"mits: limit of {MIT_LIMIT} MITs reached — task added without ★", file=sys.stderr)
 
     task = make_task(
         result["title"],

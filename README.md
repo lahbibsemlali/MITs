@@ -1,28 +1,28 @@
-# mit ⚡
+# MITs
 
-[![PyPI version](https://img.shields.io/pypi/v/mit-tasks.svg)](https://pypi.org/project/mit-tasks/)
-[![Python 3.10+](https://img.shields.io/pypi/pyversions/mit-tasks.svg)](https://pypi.org/project/mit-tasks/)
+[![PyPI version](https://img.shields.io/pypi/v/mits.svg)](https://pypi.org/project/mits/)
+[![Python 3.10+](https://img.shields.io/pypi/pyversions/mits.svg)](https://pypi.org/project/mits/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Terminal task manager built around the **3 Most Important Tasks (MIT)** method: star up to three tasks per day, track due dates, projects, recurring work, notes, global search, weekly review, undo, and themes.
 
 <p align="center">
-  <img src="assets/demos/demo-main.gif" alt="mit main UI" width="720">
+  <img src="assets/demos/demo-main.gif" alt="MITs main UI" width="720">
 </p>
 
 <p align="center">
-  <img src="assets/demos/demo-search.gif" alt="mit global search" width="720">
+  <img src="assets/demos/demo-search.gif" alt="MITs global search" width="720">
 </p>
 
-*Replace the placeholder GIFs in `assets/demos/` with your own recordings — see [assets/demos/README.md](assets/demos/README.md).*
+*GIFs are auto-generated mock UIs (`make demo-gifs`). For real terminal recordings, see [assets/demos/README.md](assets/demos/README.md).*
 
 ## Install
 
 ### From PyPI
 
 ```bash
-pip install mit-tasks
-mit
+pip install mits
+mits
 ```
 
 ### From source
@@ -40,23 +40,23 @@ Or with pip in a virtualenv:
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python mit.py
+python mits.py
 ```
 
 ### Editable install (development)
 
 ```bash
 pip install -e .
-mit --version
+mits --version
 ```
 
 ## CLI quick capture
 
 ```bash
-mit "fix the rlinks bug"            # → inbox
-mit "fix SSR bug +work"             # → inbox, tagged #work
-mit today "read x86 calling conv"   # → today
-mit someday "learn heap exploit"    # → someday
+mits "fix the rlinks bug"            # → inbox
+mits "fix SSR bug +work"             # → inbox, tagged #work
+mits today "read x86 calling conv"   # → today
+mits someday "learn heap exploit"    # → someday
 ```
 
 Use `+projectname` anywhere in the title for a project tag.
@@ -66,13 +66,13 @@ Use `+projectname` anywhere in the title for a project tag.
 Add to `~/.zshrc` or `~/.bashrc`:
 
 ```bash
-python /path/to/mit.py --summary
+python /path/to/mits.py --summary
 ```
 
 Example output:
 
 ```
-⚡ mit — Monday, April 07
+⚡ MITs — Monday, April 07
 
   MITs (2/3)
   ★ fix rlinks_client SSR bug            #work
@@ -107,16 +107,18 @@ Full list: press `?` in the app.
 - **Undo** — stack of recent changes (`u`)
 - **Weekly review** — `W`
 - **Themes** — `t` (persisted in config)
-- **CLI & JSON** — `mit --summary --json`, `mit --report`
+- **CLI & JSON** — `mits --summary --json`, `mits --report`
 
 ## Data locations (XDG)
 
 | | Path |
 |---|------|
-| Tasks | `$XDG_DATA_HOME/mit/data.json` (default: `~/.local/share/mit/data.json`) |
-| Config | `$XDG_CONFIG_HOME/mit/config.json` (default: `~/.config/mit/config.json`) |
+| Tasks | `$XDG_DATA_HOME/mits/data.json` (default: `~/.local/share/mits/data.json`) |
+| Config | `$XDG_CONFIG_HOME/mits/config.json` (default: `~/.config/mits/config.json`) |
 
-Override data file: `MIT_DATA=/path/to/data.json`.
+Override data file: `MITS_DATA=/path/to/data.json` (legacy: `MIT_DATA`).
+
+On first run, if you previously used the `mit` app directory, data is copied from `~/.local/share/mit/` into `mits/` when the new files do not exist yet.
 
 ## Development
 
@@ -126,7 +128,8 @@ make launch     # run TUI (same as make run)
 make dev        # Textual devtools
 make build      # sdist + wheel → dist/
 make report     # markdown report to stdout
-make reset      # wipe local mit data (careful)
+make demo-gifs  # regenerate README demo GIFs (needs pillow)
+make reset      # wipe local MITs data (careful)
 make clean      # remove .venv and caches
 ```
 
@@ -148,13 +151,14 @@ Repository: [github.com/lahbibsemlali/mit](https://github.com/lahbibsemlali/mit)
 
 ```
 mit/
-├── mit.py              # CLI entry
+├── mits.py             # CLI entry
 ├── app.py              # TUI app
 ├── data.py             # storage & parsing
 ├── help_text.py        # help screen copy
 ├── themes.py
 ├── widgets/            # UI panels & modals
-├── assets/demos/       # README GIFs (replace placeholders)
+├── assets/demos/       # README GIFs
+├── scripts/            # generate_demo_gifs.py (Pillow)
 ├── pyproject.toml
 ├── requirements.txt
 ├── Makefile

@@ -1,4 +1,4 @@
-"""themes.py — terminal-native colour palettes for mit ⚡"""
+"""themes.py — terminal-native colour palettes for MITs"""
 from __future__ import annotations
 
 from textual.theme import Theme

@@ -106,7 +106,7 @@ class ForgeApp(App):
         padding: 0 1;
     }
     """
-    TITLE = "mit"
+    TITLE = "MITs"
 
     # All bindings hidden — context bar replaces the footer
     BINDINGS = [

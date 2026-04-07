@@ -5,6 +5,8 @@ from textual.app import ComposeResult
 from textual.containers import Container
 from textual.widgets import Static
 
+from logo import LOGO_SIDEBAR
+
 VIEWS       = ["today", "inbox", "someday", "projects"]
 VIEW_LABELS = {
     "today":    "Today",
@@ -27,7 +29,7 @@ class Sidebar(Container):
         border-right: solid $accent;
     }
     Sidebar Static { height: 1; }
-    #sb_logo      { height: 2; padding: 1 0 0 0; }
+    #sb_logo      { height: 3; margin-bottom: 1; }
     #sb_proj_list { height: auto; }
     #sb_stats     { height: auto; margin-top: 1; }
     #sb_focus_tip { height: auto; color: $text-muted; margin-top: 1; }
@@ -41,7 +43,7 @@ class Sidebar(Container):
         self._project_counts: dict[str, int] = {}
 
     def compose(self) -> ComposeResult:
-        yield Static("[bold $accent]mit ⚡[/]",  id="sb_logo")
+        yield Static(LOGO_SIDEBAR, id="sb_logo")
         yield Static("[dim]VIEWS[/]",            id="sb_views_hdr")
         yield Static("[dim]─────[/]",            id="sb_views_div")
         yield Static("", id="nav_today")

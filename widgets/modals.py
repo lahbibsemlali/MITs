@@ -386,7 +386,7 @@ class HelpModal(ModalScreen):
 
     def compose(self) -> ComposeResult:
         body = self._help_text or HELP_TEXT_BUILTIN
-        text = f"[bold $accent]mit · help[/]\n\n{body}"
+        text = f"[bold $accent]MITs · help[/]\n\n{body}"
         with Container(id="help_box"):
             yield Static(text, id="help_static", markup=True)
 
