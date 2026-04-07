@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mits-tasks"
+name = "mits-cli"
 version = "0.1.0"
 description = "Terminal task manager enforcing the 3 Most Important Tasks (MIT) method — MITs"
 readme = "README.md"

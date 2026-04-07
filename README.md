@@ -18,7 +18,7 @@
 ## Install
 
 ```bash
-pip install mits-tasks
+pip install mits-cli
 mits
 ```
 
