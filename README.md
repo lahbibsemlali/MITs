@@ -180,7 +180,6 @@ MITs/
 ├── themes.py           # colour palettes
 ├── widgets/            # sidebar, task panel, modals, search
 ├── assets/demos/       # README GIFs
-├── scripts/            # demo GIF generation + cast trimming
 ├── pyproject.toml
 ├── Makefile
 └── LICENSE
