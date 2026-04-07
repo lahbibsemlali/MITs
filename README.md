@@ -1,6 +1,7 @@
 # MITs ⚡
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://img.shields.io/pypi/v/mits-cli.svg)](https://pypi.org/project/mits-cli/)
+[![Python 3.10+](https://img.shields.io/pypi/pyversions/mits-cli.svg)](https://pypi.org/project/mits-cli/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > A terminal task manager built around the **3 Most Important Tasks** method — focus on what actually matters today.
