@@ -28,7 +28,7 @@ mit
 ### From source
 
 ```bash
-git clone https://github.com/yourusername/mit.git
+git clone https://github.com/lahbibsemlali/mit.git
 cd mit
 make install
 make launch
@@ -142,7 +142,7 @@ python -m twine upload dist/*
 
 Use [TestPyPI](https://test.pypi.org/) first if you like: `twine upload --repository testpypi dist/*`.
 
-Set `Homepage` / `Repository` in `pyproject.toml` `[project.urls]` to your real GitHub URL before publishing.
+Repository: [github.com/lahbibsemlali/mit](https://github.com/lahbibsemlali/mit).
 
 ## Repository layout
 

@@ -28,10 +28,10 @@ classifiers = [
 dependencies = ["textual>=8.0.0"]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/mit"
-Documentation = "https://github.com/yourusername/mit#readme"
-Repository = "https://github.com/yourusername/mit"
-Issues = "https://github.com/yourusername/mit/issues"
+Homepage = "https://github.com/lahbibsemlali/mit"
+Documentation = "https://github.com/lahbibsemlali/mit#readme"
+Repository = "https://github.com/lahbibsemlali/mit"
+Issues = "https://github.com/lahbibsemlali/mit/issues"
 
 [project.scripts]
 mit = "mit:main"

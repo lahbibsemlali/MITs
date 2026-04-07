@@ -58,7 +58,7 @@ paths:
 shell greeting — add to .zshrc / .bashrc:
   python /path/to/mit.py --summary
 
-feedback & issues: https://github.com/yourusername/mit
+feedback & issues: https://github.com/lahbibsemlali/mit
 """,
     )
 
