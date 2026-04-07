@@ -1,5 +1,6 @@
 # MITs ⚡
 
+[![CI](https://github.com/lahbibsemlali/MITs/actions/workflows/ci.yml/badge.svg)](https://github.com/lahbibsemlali/MITs/actions/workflows/ci.yml)
 [![PyPI version](https://img.shields.io/pypi/v/mits-cli.svg)](https://pypi.org/project/mits-cli/)
 [![Python 3.10+](https://img.shields.io/pypi/pyversions/mits-cli.svg)](https://pypi.org/project/mits-cli/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
