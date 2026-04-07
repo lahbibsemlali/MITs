@@ -18,6 +18,15 @@
 
 ## Install
 
+**Recommended — installs globally and keeps it isolated:**
+
+```bash
+pipx install mits-cli
+mits
+```
+
+**With pip (inside a virtualenv):**
+
 ```bash
 pip install mits-cli
 mits
